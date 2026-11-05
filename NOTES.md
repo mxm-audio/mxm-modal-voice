@@ -16,8 +16,8 @@ MXM instrument plays it (MXM Modal Synth). The plan is ops' `plans/plan-elements
 - **MIT**, as the code it is ported from and the MXM kit are.
 - **The samples are MIT, as the code they are published with** (the owner, 2026-11-05: *"they
   are released with the projects so we considder them MIT as well."*).
-- **Private until every case passes, then public** on the owner's word, as mxm-macro-osc went
-  public once done.
+- **Public since 2026-11-05**, every case passing, on the owner's word (*"Publish both"*, with MXM
+  Modal Synth, which takes this crate from GitHub), as mxm-macro-osc went public once done.
 
 ## Why bit identity holds more easily than for Plaits
 
