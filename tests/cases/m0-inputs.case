@@ -1,0 +1,10 @@
+# model 0: no exciter, Strike in pulsed and Blow in noise, held
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.model 0
+set patch.exciter_strike_level 0.0
+input 0 strike pulse 0.8 4000
+input 500 blow noise 0.3 1
+at 0 perf.gate 1

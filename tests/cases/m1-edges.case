@@ -1,0 +1,62 @@
+# model 1: every control at 0, then at its ceiling
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.model 1
+set patch.exciter_envelope_shape 0.0
+set patch.exciter_bow_timbre 0.0
+set patch.exciter_blow_meta 0.0
+set patch.exciter_blow_timbre 0.0
+set patch.exciter_strike_meta 0.0
+set patch.exciter_strike_timbre 0.0
+set patch.exciter_strike_level 0.0
+set patch.resonator_geometry 0.0
+set patch.resonator_brightness 0.0
+set patch.resonator_damping 0.0
+set patch.resonator_position 0.0
+set patch.space 0.0
+set patch.exciter_signature 0.0
+set patch.reverb_diffusion 0.0
+set patch.reverb_lp 0.0
+at 1000 patch.exciter_envelope_shape 0.9995
+at 1000 patch.exciter_bow_timbre 0.9995
+at 1000 patch.exciter_blow_meta 0.9995
+at 1000 patch.exciter_blow_timbre 0.9995
+at 1000 patch.exciter_strike_meta 0.9995
+at 1000 patch.exciter_strike_timbre 0.995
+at 1000 patch.exciter_strike_level 0.9995
+at 1000 patch.resonator_geometry 0.9995
+at 1000 patch.resonator_brightness 0.9995
+at 1000 patch.resonator_damping 0.9995
+at 1000 patch.resonator_position 0.9995
+at 1000 patch.exciter_signature 0.9995
+at 1000 patch.reverb_diffusion 0.9995
+at 1000 patch.reverb_lp 0.9995
+at 1000 patch.space 1.0
+at 1000 patch.exciter_bow_level 0.9995
+at 1000 patch.exciter_blow_level 0.9995
+at 0 perf.note 30
+at 0 perf.gate 1
+at 125 perf.gate 0
+at 250 perf.note 84
+at 250 perf.gate 1
+at 375 perf.gate 0
+at 500 perf.note 30
+at 500 perf.gate 1
+at 625 perf.gate 0
+at 750 perf.note 84
+at 750 perf.gate 1
+at 875 perf.gate 0
+at 1000 perf.note 30
+at 1000 perf.gate 1
+at 1125 perf.gate 0
+at 1250 perf.note 84
+at 1250 perf.gate 1
+at 1375 perf.gate 0
+at 1500 perf.note 30
+at 1500 perf.gate 1
+at 1625 perf.gate 0
+at 1750 perf.note 84
+at 1750 perf.gate 1
+at 1875 perf.gate 0

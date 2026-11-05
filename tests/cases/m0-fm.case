@@ -1,0 +1,10 @@
+# model 0: bowed and held, the modulation from -24 to 24
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.model 0
+set patch.exciter_bow_level 1.0
+set patch.exciter_strike_level 0.0
+ramp 0 1999 perf.modulation -24 24
+at 0 perf.gate 1

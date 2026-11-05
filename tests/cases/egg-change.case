@@ -1,0 +1,23 @@
+# the hidden voice turned on and off under held notes
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set patch.exciter_bow_level 0.8
+set patch.exciter_strike_level 0.5
+at 0 perf.note 40
+at 0 perf.gate 1
+at 450 perf.gate 0
+at 500 perf.note 47
+at 500 perf.gate 1
+at 950 perf.gate 0
+at 1000 perf.note 40
+at 1000 perf.gate 1
+at 1450 perf.gate 0
+at 1500 perf.note 47
+at 1500 perf.gate 1
+at 1950 perf.gate 0
+at 0 part.easter_egg 0
+at 500 part.easter_egg 1
+at 1000 part.easter_egg 0
+at 1500 part.easter_egg 1

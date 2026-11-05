@@ -1,0 +1,10 @@
+# the hidden voice: held, the modulation from -24 to 24
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.easter_egg 1
+set patch.exciter_blow_level 0.6
+set patch.exciter_strike_level 0.6
+ramp 0 1999 perf.modulation -24 24
+at 0 perf.gate 1

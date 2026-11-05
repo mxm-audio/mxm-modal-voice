@@ -1,0 +1,25 @@
+# the hidden voice: patch.resonator_geometry from 0.0 to 0.9995
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.easter_egg 1
+set patch.exciter_blow_level 0.6
+set patch.exciter_strike_level 0.6
+ramp 0 1999 patch.resonator_geometry 0.0 0.9995
+at 0 perf.gate 1
+at 166 perf.gate 0
+at 250 perf.gate 1
+at 416 perf.gate 0
+at 500 perf.gate 1
+at 666 perf.gate 0
+at 750 perf.gate 1
+at 916 perf.gate 0
+at 1000 perf.gate 1
+at 1166 perf.gate 0
+at 1250 perf.gate 1
+at 1416 perf.gate 0
+at 1500 perf.gate 1
+at 1666 perf.gate 0
+at 1750 perf.gate 1
+at 1916 perf.gate 0

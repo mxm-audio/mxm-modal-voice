@@ -1,0 +1,2 @@
+# Every text file checks out as LF whatever core.autocrlf says, as tutti's does.
+* text=auto eol=lf

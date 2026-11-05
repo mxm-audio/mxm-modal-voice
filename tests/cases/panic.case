@@ -1,0 +1,10 @@
+# a Strike in too loud for the resonator: Part's panic resets it
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set patch.resonator_damping 0.9995
+set patch.resonator_brightness 0.9995
+set patch.exciter_strike_level 0.0
+input 0 strike noise 50 1
+at 0 perf.gate 1

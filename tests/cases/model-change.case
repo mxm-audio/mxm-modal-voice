@@ -1,0 +1,12 @@
+# bowed and held while the model steps 0, 1, 2, 0
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set patch.exciter_bow_level 0.8
+set patch.exciter_strike_level 0.5
+at 0 perf.gate 1
+at 0 part.model 0
+at 500 part.model 1
+at 1000 part.model 2
+at 1500 part.model 0

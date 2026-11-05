@@ -1,0 +1,11 @@
+# the hidden voice: both inputs playing
+blocks 2000
+set perf.note 48.0
+set perf.strength 0.8
+set perf.modulation 0.0
+set part.easter_egg 1
+set patch.exciter_blow_level 0.6
+set patch.exciter_strike_level 0.6
+input 0 strike pulse 0.5 3000
+input 0 blow noise 0.2 1
+at 0 perf.gate 1

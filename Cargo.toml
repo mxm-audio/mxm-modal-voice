@@ -1,0 +1,22 @@
+[package]
+name = "mxm-modal-voice"
+description = "Elements' modal synthesis voice, ported to Rust from Emilie Gillet's MIT code, bit for bit"
+version = "0.1.0"
+edition = "2024"
+# No runtime dependency at all.
+rust-version = "1.87"
+license = "MIT"
+authors = ["mxm"]
+repository = "https://github.com/mxm-audio/mxm-modal-voice"
+readme = "README.md"
+
+[dependencies]
+
+[dev-dependencies]
+# The reference cases' digests are SHA-256 of the rendered outputs.
+sha2 = "=0.10.9"
+
+# The cases are tested bit for bit, so their tests run optimised: a debug build of the same
+# arithmetic gives the same bits (no fast-math anywhere), only slower.
+[profile.dev.package.mxm-modal-voice]
+opt-level = 3
