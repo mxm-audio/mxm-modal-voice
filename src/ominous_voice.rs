@@ -396,6 +396,12 @@ impl OminousVoice {
         Box::default()
     }
 
+    /// Every field as [`OminousVoice::new`] made it, allocating nothing: for a host's reset,
+    /// not in the C++.
+    pub fn clear(&mut self) {
+        *self = Self::default();
+    }
+
     pub fn init(&mut self) {
         self.envelope_.init();
         self.envelope_.set_adsr(0.5, 0.5, 0.5, 0.5);

@@ -104,6 +104,31 @@ pub struct String {
 }
 
 impl String {
+    /// Every field as the static object's zero, the delay lines too, allocating nothing: for a
+    /// host, not in the C++.
+    pub fn clear(&mut self) {
+        self.frequency_ = 0.0;
+        self.dispersion_ = 0.0;
+        self.brightness_ = 0.0;
+        self.damping_ = 0.0;
+        self.position_ = 0.0;
+        self.delay_ = 0.0;
+        self.clamped_position_ = 0.0;
+        self.previous_dispersion_ = 0.0;
+        self.previous_damping_compensation_ = 0.0;
+        self.enable_dispersion_ = false;
+        self.dispersion_noise_ = 0.0;
+        self.src_phase_ = 0.0;
+        self.out_sample_ = [0.0; 2];
+        self.aux_sample_ = [0.0; 2];
+        self.curved_bridge_ = 0.0;
+        self.string_.clear();
+        self.stretch_.clear();
+        self.fir_damping_filter_ = DampingFilter::default();
+        self.iir_damping_filter_ = Svf::default();
+        self.dc_blocker_ = DCBlocker::default();
+    }
+
     pub fn init(&mut self, enable_dispersion: bool) {
         self.enable_dispersion_ = enable_dispersion;
 

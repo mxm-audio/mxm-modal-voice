@@ -86,6 +86,33 @@ impl Voice {
         Box::default()
     }
 
+    /// Every field as [`Voice::new`] made it, the buffers zero and the random stream at its
+    /// start, allocating nothing: for a host's reset, not in the C++.
+    pub fn clear(&mut self) {
+        self.envelope_ = MultistageEnvelope::default();
+        self.tube_.clear();
+        self.bow_ = Exciter::default();
+        self.blow_ = Exciter::default();
+        self.strike_ = Exciter::default();
+        self.diffuser_.clear();
+        self.resonator_.clear();
+        for string in &mut self.string_ {
+            string.clear();
+        }
+        self.dc_blocker_ = DCBlocker::default();
+        self.strength_ = 0.0;
+        self.envelope_value_ = 0.0;
+        self.exciter_level_ = 0.0;
+        self.bow_buffer_ = [0.0; K_MAX_BLOCK_SIZE];
+        self.bow_strength_buffer_ = [0.0; K_MAX_BLOCK_SIZE];
+        self.blow_buffer_ = [0.0; K_MAX_BLOCK_SIZE];
+        self.strike_buffer_ = [0.0; K_MAX_BLOCK_SIZE];
+        self.previous_gate_ = false;
+        self.resonator_model_ = 0;
+        self.chord_index_ = 0.0;
+        self.random = Random::default();
+    }
+
     pub fn init(&mut self) {
         self.envelope_.init();
         self.bow_.init();

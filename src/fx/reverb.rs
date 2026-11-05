@@ -35,6 +35,19 @@ impl Reverb {
         self.diffusion_ = 0.625;
     }
 
+    /// Every field as the static object's zero, its memory too, allocating nothing: for a host,
+    /// not in the C++. `init` after it is the reverb as `Part::Init` leaves it.
+    pub fn clear(&mut self) {
+        self.engine_.clear();
+        self.amount_ = 0.0;
+        self.input_gain_ = 0.0;
+        self.reverb_time_ = 0.0;
+        self.diffusion_ = 0.0;
+        self.lp_ = 0.0;
+        self.lp_decay_1_ = 0.0;
+        self.lp_decay_2_ = 0.0;
+    }
+
     pub fn process(&mut self, left: &mut [f32], right: &mut [f32], size: usize) {
         // This is the Griesinger topology described in the Dattorro paper (4 AP diffusers on the
         // input, then a loop of 2x 2AP+1Delay). Modulation is applied in the loop of the first

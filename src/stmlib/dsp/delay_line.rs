@@ -41,6 +41,14 @@ impl<const MAX_DELAY: usize> DelayLine<MAX_DELAY> {
         self.reset();
     }
 
+    /// Every field as the static object's zero, the line too, allocating nothing: for a host,
+    /// not in the C++.
+    pub fn clear(&mut self) {
+        self.line_.fill(0.0);
+        self.delay_ = 0;
+        self.write_ptr_ = 0;
+    }
+
     pub fn reset(&mut self) {
         self.line_.fill(0.0);
         self.delay_ = 1;

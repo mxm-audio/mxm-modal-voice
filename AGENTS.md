@@ -82,8 +82,10 @@ claim is that it is bit identical to the original, and every rule below keeps th
   aux, size)` once per block of up to 16. `Part::Panic`, declared and never defined, is not.
 - `Voice`, `OminousVoice` and `fx::reverb::Reverb` are public for a host that builds its own
   polyphonic part. For a host, and not in the C++: `Voice::envelope` and `OminousVoice::envelope`
-  read the exciter's envelope (a *Contour* source), `Voice::random_mut` the voice's stream. None of
-  them changes a bit of `process`.
+  read the exciter's envelope (a *Contour* source), `Voice::random_mut` the voice's stream, and
+  `clear` (on the voices, the reverb and every part with memory) returns an object to what `new`
+  made, allocating nothing, for a host's reset (`tests/clear.rs`). None of them changes a bit of
+  `process`.
 - Not ported: everything of the hardware's (panel, settings, calibration, drivers), and the
   firmware's `cv_scaler.cc` and `elements.cc` around the part, but for `SoftConvert`, which the
   harness and the tests apply as `elements.cc` does.

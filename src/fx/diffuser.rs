@@ -22,6 +22,11 @@ impl Diffuser {
         self.engine_.init();
     }
 
+    /// As the static object's zero, allocating nothing: for a host, not in the C++.
+    pub fn clear(&mut self) {
+        self.engine_.clear();
+    }
+
     pub fn process(&mut self, in_out: &mut [f32], size: usize) {
         let [ap1, ap2, ap3, ap4] = MEMORY;
         let kap = 0.625f32;

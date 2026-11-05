@@ -36,6 +36,15 @@ fn wrap(index: i32) -> usize {
 }
 
 impl Tube {
+    /// Every field as the static object's zero, the delay line too, allocating nothing: for a
+    /// host, not in the C++.
+    pub fn clear(&mut self) {
+        self.delay_ptr_ = 0;
+        self.zero_state_ = 0.0;
+        self.pole_state_ = 0.0;
+        self.delay_line_.fill(0.0);
+    }
+
     pub fn init(&mut self) {
         self.zero_state_ = 0.0;
         self.pole_state_ = 0.0;

@@ -124,6 +124,13 @@ impl<const SIZE: usize, F: DataType> FxEngine<SIZE, F> {
         self.write_ptr_ = 0;
     }
 
+    /// Every field as the static object's zero, the LFOs too, allocating nothing: for a host,
+    /// not in the C++.
+    pub fn clear(&mut self) {
+        self.init();
+        self.lfo_ = [CosineOscillator::default(), CosineOscillator::default()];
+    }
+
     #[inline]
     pub fn set_lfo_frequency(&mut self, index: usize, frequency: f32) {
         self.lfo_[index].init::<COSINE_OSCILLATOR_APPROXIMATE>(frequency * 32.0);

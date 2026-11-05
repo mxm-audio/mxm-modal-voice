@@ -61,6 +61,28 @@ impl Default for Resonator {
 }
 
 impl Resonator {
+    /// Every field as the static object's zero, the delay lines too, allocating nothing: for a
+    /// host, not in the C++.
+    pub fn clear(&mut self) {
+        self.frequency_ = 0.0;
+        self.geometry_ = 0.0;
+        self.brightness_ = 0.0;
+        self.position_ = 0.0;
+        self.previous_position_ = 0.0;
+        self.damping_ = 0.0;
+        self.modulation_frequency_ = 0.0;
+        self.modulation_offset_ = 0.0;
+        self.lfo_phase_ = 0.0;
+        self.bow_signal_ = 0.0;
+        self.resolution_ = 0;
+        self.f_ = std::array::from_fn(|_| Svf::default());
+        self.f_bow_ = std::array::from_fn(|_| Svf::default());
+        for d in &mut self.d_bow_ {
+            d.clear();
+        }
+        self.clock_divider_ = 0;
+    }
+
     pub fn init(&mut self) {
         for f in &mut self.f_ {
             f.init();
