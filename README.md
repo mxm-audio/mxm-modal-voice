@@ -41,10 +41,20 @@ the part, and the 16-bit frames the module makes of them, by SHA-256. Every case
 
 The cases have been checked on Windows, x86-64. The port calls no floating-point library function
 but `abs`, which is exact: the two `sinf` results the hidden voice's `Init` needs are the reference
-build's own, kept as constants. So other platforms should give the same bits, but they have not
+build's own, kept as constants (the limit below, when it is on, adds a `sqrt`, which IEEE 754
+rounds exactly). So other platforms should give the same bits, but they have not
 been checked yet. To render the reference's bits, run with flush-to-zero on, as the reference did.
 The tests set it on x86-64. Without it the sound is the same to the ear, but a sample that passes
 through a denormal can differ in its last bit.
+
+## One addition, off unless you turn it on
+
+The modal resonator's eight bowed modes run whether or not the bow plays. In the original, a struck
+mode above about 7.4 kHz (0.2304 of the 32 kHz rate) can feed back through the bow more than it
+loses, and ring louder without end; it happens in Elements' own C++ at the same pitches.
+`Voice::set_bowed_loop_limit(true)` holds each bowed mode's loop to the gain of 0.99 the code gives
+it, so such a mode dies away like its neighbours. Below that frequency nothing changes, to the bit.
+It is off unless a host turns it on, so the port stays the original's, and the 106 cases hold.
 
 ## Using it
 

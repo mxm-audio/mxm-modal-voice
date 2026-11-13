@@ -169,6 +169,14 @@ impl Voice {
         self.envelope_.value()
     }
 
+    /// The modal resonator's bowed loops held to the C++'s gain
+    /// ([`Resonator::set_bowed_loop_limit`]): for a host, not in the C++. Off, as `new` makes it
+    /// and `clear` leaves it, the voice is the C++'s.
+    #[inline]
+    pub fn set_bowed_loop_limit(&mut self, on: bool) {
+        self.resonator_.set_bowed_loop_limit(on);
+    }
+
     /// This voice's random stream: for a host that wants to restart it, not in the C++.
     #[inline]
     pub fn random_mut(&mut self) -> &mut Random {

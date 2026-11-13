@@ -62,8 +62,11 @@ claim is that it is bit identical to the original, and every rule below keeps th
   two other calls, `sinf` in `NaiveSvf::set_f_q<FREQUENCY_EXACT>` from the hidden voice's `Init`,
   take two constants; their results are the reference build's own bits (`0x3ea0305c`,
   `0x3f1e377a`, read off the filters after `Part::Init` by the harness's `--constants`), kept in
-  `stmlib::dsp::filter`. Any other exact path (`tanf`, `cosf`) is a compile error.
-- **No change from the C++**, not the rate (32 kHz, as the module's codec), nothing.
+  `stmlib::dsp::filter`. Any other exact path (`tanf`, `cosf`) is a compile error. The bowed
+  loops' limit (below), off unless a host turns it on, reads its cosine from Elements' `LUT_SINE`
+  and takes a `sqrt`, which IEEE 754 rounds exactly everywhere.
+- **No change from the C++**, not the rate (32 kHz, as the module's codec), nothing. What a host
+  may add is off until it turns it on (*The interface*).
 - **No denormal guard**: the reference was rendered with flush-to-zero on, and a host that wants
   its bits sets the same; a guard of the port's own would change them.
 
@@ -86,6 +89,11 @@ claim is that it is bit identical to the original, and every rule below keeps th
   `clear` (on the voices, the reverb and every part with memory) returns an object to what `new`
   made, allocating nothing, for a host's reset (`tests/clear.rs`). None of them changes a bit of
   `process`.
+- **The bowed loops' limit**, for a host and not in the C++: `set_bowed_loop_limit` on `Voice`
+  and `Resonator`, off as `new` makes it and `clear` leaves it, `init` leaving it as it is. On,
+  each bowed mode's loop is held to the C++'s own gain of 0.99, so a struck mode above 0.2304 of
+  the rate (7.37 kHz) no longer rings louder without end, as it does in the C++; below that every
+  bit is the C++'s (`tests/bowed_loop_limit.rs`; NOTES.md, with the owner's ruling).
 - Not ported: everything of the hardware's (panel, settings, calibration, drivers), and the
   firmware's `cv_scaler.cc` and `elements.cc` around the part, but for `SoftConvert`, which the
   harness and the tests apply as `elements.cc` does.

@@ -5,13 +5,16 @@
 //!
 //! `clock_divider_` and `lfo_phase_`, which `Init` never sets, start at the static object's zero
 //! and carry on across an `init`, as in the C++.
+//!
+//! For a host, and not in the C++: [`Resonator::set_bowed_loop_limit`], off unless a host turns
+//! it on, which holds each bowed mode's loop to the gain the C++ means it to have.
 
 use crate::cpp::min;
 use crate::dsp::K_SAMPLE_RATE;
-use crate::resources::{LUT_4_DECADES, LUT_STIFFNESS};
+use crate::resources::{LUT_4_DECADES, LUT_SINE, LUT_STIFFNESS};
 use crate::stmlib::dsp::cosine_oscillator::{COSINE_OSCILLATOR_APPROXIMATE, CosineOscillator};
 use crate::stmlib::dsp::delay_line::DelayLine;
-use crate::stmlib::dsp::dsp::{cast_usize, interpolate};
+use crate::stmlib::dsp::dsp::{cast_usize, interpolate, interpolate_wrap};
 use crate::stmlib::dsp::filter::{
     FILTER_MODE_BAND_PASS, FILTER_MODE_BAND_PASS_NORMALIZED, FREQUENCY_FAST, Svf,
 };
@@ -19,6 +22,25 @@ use crate::stmlib::dsp::filter::{
 pub const K_MAX_MODES: usize = 64;
 pub const K_MAX_BOWED_MODES: usize = 8;
 pub const K_MAX_DELAY_LINE_SIZE: usize = 1024;
+
+/// The bow table's steepest slope, its clamp: what a quiet bow feeds back of the bowed modes.
+const BOW_SLOPE: f32 = 0.245;
+
+/// Not in the C++: a bowed mode's feedback under [`Resonator::set_bowed_loop_limit`].
+///
+/// A bowed mode is a loop: its delay read times 0.99, through a band-pass of unity gain at the
+/// mode's `frequency` (of the rate), back into the delay. The bow table, read a sample later, adds
+/// what the delays held times its slope, at most `-BOW_SLOPE` (a quiet bow, the table at its
+/// clamp), so at the mode the loop's gain is `0.99 |1 - BOW_SLOPE e^-jw|`, `w = 2 pi frequency`.
+/// That passes 1 above 0.2304 of the rate (7.37 kHz at the module's 32), and a mode up there,
+/// struck, can ring louder without end. There the 0.99 is divided by `|1 - BOW_SLOPE e^-jw|`,
+/// so the loop's gain stays the 0.99 the C++ gives it; below it is 0.99, as in the C++.
+/// No maths library: the cosine is Elements' sine table, and `sqrt` is IEEE's, exact.
+fn bowed_loop_feedback(frequency: f32) -> f32 {
+    let cosine = interpolate_wrap(&LUT_SINE, frequency + 0.25, 4096.0);
+    let gain = (1.0 + BOW_SLOPE * BOW_SLOPE - 2.0 * BOW_SLOPE * cosine).sqrt();
+    if gain > 1.0 { 0.99 / gain } else { 0.99 }
+}
 
 pub struct Resonator {
     frequency_: f32,
@@ -36,6 +58,11 @@ pub struct Resonator {
     f_bow_: [Svf; K_MAX_BOWED_MODES],
     d_bow_: [DelayLine<K_MAX_DELAY_LINE_SIZE>; K_MAX_BOWED_MODES],
     clock_divider_: usize,
+
+    /// Not in the C++: [`Resonator::set_bowed_loop_limit`], and each bowed mode's feedback,
+    /// 0.99 as in the C++ while it is off.
+    bowed_loop_limit: bool,
+    bow_feedback: [f32; K_MAX_BOWED_MODES],
 }
 
 impl Default for Resonator {
@@ -56,13 +83,15 @@ impl Default for Resonator {
             f_bow_: std::array::from_fn(|_| Svf::default()),
             d_bow_: std::array::from_fn(|_| DelayLine::default()),
             clock_divider_: 0,
+            bowed_loop_limit: false,
+            bow_feedback: [0.99; K_MAX_BOWED_MODES],
         }
     }
 }
 
 impl Resonator {
-    /// Every field as the static object's zero, the delay lines too, allocating nothing: for a
-    /// host, not in the C++.
+    /// Every field as the static object's zero, the delay lines too, and the bowed loops' limit
+    /// off, allocating nothing: for a host, not in the C++.
     pub fn clear(&mut self) {
         self.frequency_ = 0.0;
         self.geometry_ = 0.0;
@@ -81,6 +110,18 @@ impl Resonator {
             d.clear();
         }
         self.clock_divider_ = 0;
+        self.bowed_loop_limit = false;
+        self.bow_feedback = [0.99; K_MAX_BOWED_MODES];
+    }
+
+    /// For a host, and not in the C++: on, each bowed mode's loop is held to the C++'s gain of
+    /// 0.99 (`bowed_loop_feedback`), so a mode above 0.2304 of the rate (7.37 kHz) no longer
+    /// rings on without end once struck; below it nothing changes, to the bit. Off, as `new`
+    /// makes it, the resonator is the C++'s. Takes effect from the next block; `init` leaves it
+    /// as it is, `clear` turns it off.
+    #[inline]
+    pub fn set_bowed_loop_limit(&mut self, on: bool) {
+        self.bowed_loop_limit = on;
     }
 
     pub fn init(&mut self) {
@@ -199,6 +240,12 @@ impl Resonator {
                     self.d_bow_[i].set_delay(period);
                     let g = self.f_[i].g();
                     self.f_bow_[i].set_g_q(g, 1.0 + partial_frequency * 1500.0);
+                    // Not in the C++: the bowed loop's limit, 0.99 while it is off.
+                    self.bow_feedback[i] = if self.bowed_loop_limit {
+                        bowed_loop_feedback(partial_frequency)
+                    } else {
+                        0.99
+                    };
                 }
             }
             stretch_factor += stiffness;
@@ -267,7 +314,8 @@ impl Resonator {
             input += self.bow_signal_;
             amplitudes.start();
             for i in 0..num_banded_wg {
-                let mut s = 0.99 * self.d_bow_[i].read();
+                // `0.99f *` in the C++, the same 0.99 while the limit is off.
+                let mut s = self.bow_feedback[i] * self.d_bow_[i].read();
                 bow_signal += s;
                 s = self.f_bow_[i].process::<FILTER_MODE_BAND_PASS_NORMALIZED>(input + s);
                 self.d_bow_[i].write(s);
